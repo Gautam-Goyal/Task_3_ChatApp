@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:task2/HomePage.dart';
+import 'package:task2/chatRoomsScreen.dart';
 import 'package:task2/login.dart';
 import 'authentication.dart';
 
@@ -28,9 +29,13 @@ class MyApp extends StatelessWidget {
         child:MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
+            brightness: Brightness.dark,
+            primaryColor: Colors.green[900],
           ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+          ),
+          debugShowCheckedModeBanner: false,
           home: AuthenticationWrapper(),
         )
     );
@@ -54,7 +59,7 @@ class AuthenticationWrapper extends StatelessWidget {
       //     textColor: Colors.white,
       //     fontSize: 16.0
       // );
-      return HomePage();
+      return ChatRoom();
     }
     else{
       print("Login Page");

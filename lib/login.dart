@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:task2/chatRoomsScreen.dart';
+import 'package:task2/helperFunctions.dart';
 import 'package:task2/iconandtext.dart';
 import 'package:flutter/material.dart';
-
+import 'package:task2/database.dart';
 import 'authentication.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController loginPasswordController=TextEditingController();
   final TextEditingController signupUsernameController=TextEditingController();
   final TextEditingController signupPasswordController=TextEditingController();
+  final TextEditingController signupNameOfUserController=TextEditingController();
+  String nameOfUser;
   String loginUsername;
   String loginPassword;
   String signupUsername;
@@ -44,10 +51,12 @@ class _LoginPageState extends State<LoginPage> {
 
   // bool _keyboardVisible = false;
 
+  DatabaseMethods databaseMethods =new DatabaseMethods();
+  QuerySnapshot userInfo;
   @override
   void initState() {
     super.initState();
-
+    signupNameOfUserController.addListener(() {setState(() {});});
     loginPasswordController.addListener(() {setState(() {});});
     loginUsernameController.addListener(() {setState(() {});});
     signupPasswordController.addListener(() {setState(() {});});
@@ -244,6 +253,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "Login To Continue",
                       style: TextStyle(
+                        color: Colors.black,
                           fontSize: 20
                       ),
                     ),
@@ -262,24 +272,35 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   GestureDetector(
                     onTap:() async {
+                      // final firebaseUser = context.watch<User>();
                       if (formkey1.currentState.validate() == true) {
+                        HelperFunctions.saveUserEmailSharedPreference(loginUsernameController.text);
                         var result= await Provider.of<Authentication>(context, listen: false)
                             .signIn(
                             email: loginUsernameController.text,
                             password: loginPasswordController.text
-                        );
-                        if (result.toString() == "SignedIn") {
-                          setState(() {
-                            Fluttertoast.showToast(msg: "Signed In!",
-                                toastLength: Toast.LENGTH_SHORT);
-                          });
-                        }
-                        else {
+                        ).then((value){
+                          if(value!=null){
+                            databaseMethods.getUserByEmail(loginUsernameController.text).then((value){
+                              userInfo =value;
+                              HelperFunctions.saveUserEmailSharedPreference(userInfo.docs[0].data());
+                            });
+                            HelperFunctions.saveUserLoggedInSharedPreference(true);
+                            HelperFunctions.saveUserEmailSharedPreference(loginUsernameController.text);
+                          }
+                        });
+                        // if (firebaseUser != null) {
                           setState(() {
                             Fluttertoast.showToast(msg: result.toString(),
                                 toastLength: Toast.LENGTH_SHORT);
                           });
-                        }
+                        // }
+                        // else {
+                        //   setState(() {
+                        //     Fluttertoast.showToast(msg: result.toString(),
+                        //         toastLength: Toast.LENGTH_SHORT);
+                        //   });
+                        // }
                       }
                     },
                     child: PrimaryButton(
@@ -334,9 +355,15 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "Create a New Account",
                       style: TextStyle(
+                        color: Colors.black,
                           fontSize: 20
                       ),
                     ),
+                  ),
+                  UsernameWithIcon(
+                    icon: Icons.account_circle_sharp,
+                    hint: "Enter Username",
+                    nameOfUserController: signupNameOfUserController,
                   ),
                   EmailWithIcon(
                     icon: Icons.email,
@@ -357,25 +384,40 @@ class _LoginPageState extends State<LoginPage> {
                             context, listen: false).signUp(
                             email: signupUsernameController.text,
                             password: signupPasswordController.text
-                        );
+                        ).then((value){
+                          if(value!=null){
+                            Map<String ,String> userInfoMap ={
+                              "name":signupNameOfUserController.text,
+                              "email":signupUsernameController.text
+                            };
+                            HelperFunctions.saveUserNameSharedPreference(signupNameOfUserController.text);
+                            HelperFunctions.saveUserEmailSharedPreference(signupUsernameController.text);
+
+                            databaseMethods.uploadUserInfo(userInfoMap);
+                            HelperFunctions.saveUserLoggedInSharedPreference(true);
+                            Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => ChatRoom()
+                            ));
+                          }
+                        });
                         setState(() {
                           _isloading = true;
                           _pageState = 1;
                         });
-                        if (result.toString() == "SignedUp") {
-                          setState(() {
-                            _isloading = false;
-                            Fluttertoast.showToast(msg: "Signed Up!",
-                                toastLength: Toast.LENGTH_SHORT);
-                          });
-                        }
-                        else {
-                          setState(() {
-                            Fluttertoast.showToast(msg: result.toString(),
-                                toastLength: Toast.LENGTH_SHORT);
-                            _isloading = false;
-                          });
-                        }
+                        // if (firebaseUser != null) {
+                        //   setState(() {
+                        //     _isloading = false;
+                        //     Fluttertoast.showToast(msg: "Signed Up!",
+                        //         toastLength: Toast.LENGTH_SHORT);
+                        //   });
+                        // }
+                        // else {
+                        //   setState(() {
+                        //     Fluttertoast.showToast(msg: result.toString(),
+                        //         toastLength: Toast.LENGTH_SHORT);
+                        //     _isloading = false;
+                        //   });
+                        // }
                       }
                     },
                     child: PrimaryButton(

@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "181601971102",
-    "project_id": "task2-15bed",
-    "storage_bucket": "task2-15bed.appspot.com"
+    "project_number": "654595172682",
+    "project_id": "chatapp-2a9c6",
+    "storage_bucket": "chatapp-2a9c6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:181601971102:android:1cf60dce0dfe9c458a048f",
+        "mobilesdk_app_id": "1:654595172682:android:0be7851d22924bd0cf79b3",
         "android_client_info": {
-          "package_name": "com.gautam.task2"
+          "package_name": "com.gautam.chatApp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "181601971102-ckjsq8hla8regog5me7ao74qqisofp90.apps.googleusercontent.com",
+          "client_id": "654595172682-nknakdtoe0u8e7p9jl2imt3s2lt4r60q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDGedBL-8uqG-BWmoivTRcSdVmLiAT0aXw"
+          "current_key": "AIzaSyAwOZha23b60g9dLDs-ErS5OyBqtZJLO7Y"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "181601971102-ckjsq8hla8regog5me7ao74qqisofp90.apps.googleusercontent.com",
+              "client_id": "654595172682-nknakdtoe0u8e7p9jl2imt3s2lt4r60q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
